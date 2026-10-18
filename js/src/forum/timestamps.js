@@ -1,7 +1,6 @@
 import { player } from './player';
-import { parseClock, ts } from './util';
-
-const PATTERN = /(^|[^\d:])((?:\d{1,2}:)?\d{1,3}:[0-5]\d)(?![\d:])/g;
+import { ts } from './util';
+import { findStamps } from './time';
 const SKIP = 'a, code, pre, button, .EarshotStamp';
 
 /**
@@ -21,13 +20,11 @@ export function linkTimestamps(body, data) {
 
   nodes.forEach((node) => {
     const text = node.nodeValue;
+    const stamps = findStamps(text, limit);
+    if (!stamps.length) return;
     const frag = document.createDocumentFragment();
     let last = 0;
-    let found = false;
-    text.replace(PATTERN, (match, before, stamp, offset) => {
-      const seconds = parseClock(stamp);
-      if (seconds === null || seconds > limit) return match;
-      const start = offset + before.length;
+    stamps.forEach(([stamp, seconds, start]) => {
       frag.appendChild(document.createTextNode(text.slice(last, start)));
       const chip = document.createElement('button');
       chip.type = 'button';
@@ -37,10 +34,7 @@ export function linkTimestamps(body, data) {
       chip.addEventListener('click', () => player.play(episode, show, seconds));
       frag.appendChild(chip);
       last = start + stamp.length;
-      found = true;
-      return match;
     });
-    if (!found) return;
     frag.appendChild(document.createTextNode(text.slice(last)));
     node.parentNode.replaceChild(frag, node);
   });
