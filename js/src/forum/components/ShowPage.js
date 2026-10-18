@@ -161,6 +161,11 @@ export default class ShowPage extends Page {
     return new ItemList();
   }
 
+  /** Badges before an episode's details (add-ons: supporters only, early access). */
+  rowBadges(e) {
+    return new ItemList();
+  }
+
   row(e) {
     const show = this.show;
     const current = player.isCurrent(e);
@@ -184,6 +189,7 @@ export default class ShowPage extends Page {
         </button>
         <div className="EarshotEpisode-main">
           <div className="EarshotEpisode-meta">
+            {this.rowBadges(e).toArray()}
             {[label, date(e.publishedAt), minutes(e.duration), done ? ts('show.played') : left].filter(Boolean).join(' · ')}
           </div>
           <Link className="EarshotEpisode-title" href={discussionUrl(e)}>
