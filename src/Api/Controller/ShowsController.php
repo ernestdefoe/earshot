@@ -102,8 +102,14 @@ class ShowsController implements RequestHandlerInterface
             $show->user_id = $actor->id;
         }
 
+        // A followed show may leave its title to the feed.
+        $titleFromFeed = false;
         if (! $show->exists || array_key_exists('title', $in)) {
             $title = FeedReader::line((string) Arr::get($in, 'title', ''), 120);
+            if ($title === '' && ! $show->exists && $manager && trim((string) Arr::get($in, 'feedUrl', '')) !== '') {
+                $title = (string) parse_url(trim((string) $in['feedUrl']), PHP_URL_HOST);
+                $titleFromFeed = true;
+            }
             if ($title === '') {
                 $this->fail('title', 'title_required');
             }
@@ -111,13 +117,7 @@ class ShowsController implements RequestHandlerInterface
         }
 
         if (! $show->exists || array_key_exists('slug', $in)) {
-            $slug = Str::slug((string) (Arr::get($in, 'slug') ?: $show->title)) ?: 'show';
-            $slug = mb_substr($slug, 0, 70);
-            $base = $slug;
-            for ($n = 2; Show::query()->where('slug', $slug)->whereKeyNot($show->id ?? 0)->exists(); $n++) {
-                $slug = "$base-$n";
-            }
-            $show->slug = $slug;
+            $show->slug = $this->uniqueSlug((string) (Arr::get($in, 'slug') ?: $show->title), $show->id ?? 0);
         }
 
         foreach (['tagline' => 200, 'category' => 80] as $field => $max) {
@@ -191,15 +191,29 @@ class ShowsController implements RequestHandlerInterface
 
         // A feed just set is read at once, so the page fills while they watch.
         if ($feedChanged && $show->follows()) {
-            $result = $this->follower->refresh($show, $actor, true);
-            if (is_string($result)) {
-                $show->refresh();
+            $this->follower->refresh($show, $actor, true);
+            $show->refresh();
+            if ($titleFromFeed && $this->follower->lastTitle) {
+                $show->title = $this->follower->lastTitle;
+                $show->slug = $this->uniqueSlug($show->title, $show->id);
+                $show->save();
             }
         }
 
         $show->loadMissing('hosts');
 
         return new JsonResponse(['show' => $this->presenter->show($show, $actor, true)]);
+    }
+
+    private function uniqueSlug(string $text, int $except): string
+    {
+        $base = mb_substr(Str::slug($text) ?: 'show', 0, 70);
+        $slug = $base;
+        for ($n = 2; Show::query()->where('slug', $slug)->whereKeyNot($except)->exists(); $n++) {
+            $slug = "$base-$n";
+        }
+
+        return $slug;
     }
 
     /**
@@ -213,9 +227,10 @@ class ShowsController implements RequestHandlerInterface
 
         $files = Episode::query()->where('show_id', $show->id)->whereNotNull('audio_path')->pluck('audio_path')->all();
         $show->delete();
-        foreach ([...$files, $show->cover_path] as $path) {
+        foreach ($files as $path) {
             $this->media->delete($path);
         }
+        $this->media->deleteCover($show->cover_path);
 
         return new EmptyResponse(204);
     }

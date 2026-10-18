@@ -11,7 +11,11 @@ import { t, avatar } from '../util';
  */
 
 export function backdrop(image) {
-  return image ? <div className="EarshotHero-backdrop" style={{ backgroundImage: `url("${encodeURI(image)}")` }} /> : <div className="EarshotHero-backdrop" />;
+  return image ? (
+    <div className="EarshotHero-backdrop" style={{ backgroundImage: `url("${encodeURI(image)}")` }} />
+  ) : (
+    <div className="EarshotHero-backdrop" />
+  );
 }
 
 export function meta(parts) {

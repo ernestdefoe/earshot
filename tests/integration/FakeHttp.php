@@ -60,6 +60,10 @@ class FakeHttp extends SafeHttp
               </channel>
             </rss>
             XML];
+        $img = imagecreatetruecolor(1600, 1600);
+        ob_start();
+        imagepng($img);
+        $this->responses['https://cdn.example.com/cover.jpg'] = ['status' => 200, 'type' => 'image/png', 'url' => '', 'etag' => '', 'modified' => '', 'body' => (string) ob_get_clean()];
         $this->responses['https://cdn.example.com/ch.json'] = ['status' => 200, 'type' => 'application/json', 'url' => '', 'etag' => '', 'modified' => '',
             'body' => json_encode(['version' => '1.2.0', 'chapters' => [['startTime' => 90, 'title' => 'Second'], ['startTime' => 0, 'title' => 'Intro'], ['startTime' => 5, 'title' => 'Hidden', 'toc' => false]]])];
     }

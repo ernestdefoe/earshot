@@ -9,7 +9,7 @@ import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import Placeholder from 'flarum/common/components/Placeholder';
 import { api } from '../api';
 import { player } from '../player';
-import { t, clock, date, minutes, number, discussionUrl, episodeLabel } from '../util';
+import { t, ts, date, minutes, number, discussionUrl, episodeLabel } from '../util';
 import ShowHero from './ShowHero';
 import ShowModal from './ShowModal';
 import EpisodeModal from './EpisodeModal';
@@ -77,7 +77,11 @@ export default class ShowPage extends Page {
     const show = this.show;
     if (!show || !show.canEdit) return [];
     const out = [
-      <Button className="Button EarshotHero-button" icon="fas fa-plus" onclick={() => app.modal.show(EpisodeModal, { show, onsave: () => this.load() })}>
+      <Button
+        className="Button EarshotHero-button"
+        icon="fas fa-plus"
+        onclick={() => app.modal.show(EpisodeModal, { show, onsave: () => this.load() })}
+      >
         {t('show.publish')}
       </Button>,
       <Button
@@ -108,7 +112,10 @@ export default class ShowPage extends Page {
     api.post(`shows/${this.show.id}/refresh`).then(
       (r) => {
         this.refreshing = false;
-        app.alerts.show({ type: r.error ? 'error' : 'success' }, r.error ? t('show.refresh_failed', { error: r.error }) : t('show.refreshed', { count: r.added }));
+        app.alerts.show(
+          { type: r.error ? 'error' : 'success' },
+          r.error ? t('show.refresh_failed', { error: r.error }) : t('show.refreshed', { count: r.added })
+        );
         this.load();
       },
       () => {
@@ -154,16 +161,21 @@ export default class ShowPage extends Page {
     const position = current ? player.time() : p ? p.position : 0;
     const fraction = done ? 1 : e.duration ? Math.min(1, position / e.duration) : 0;
     const label = episodeLabel(e);
-    const left = !done && position > 0 && e.duration ? t('show.left', { time: minutes(e.duration - position) }) : null;
+    const left = !done && position > 0 && e.duration ? ts('show.left', { time: minutes(e.duration - position) }) : null;
 
     return (
       <li key={e.id} className={`EarshotEpisode ${current ? 'EarshotEpisode--current' : ''} ${done ? 'EarshotEpisode--done' : ''}`}>
-        <button type="button" className="EarshotEpisode-play" onclick={() => player.toggle(e, show)} aria-label={playing ? t('player.pause') : t('player.play')}>
+        <button
+          type="button"
+          className="EarshotEpisode-play"
+          onclick={() => player.toggle(e, show)}
+          aria-label={playing ? t('player.pause') : t('player.play')}
+        >
           <Icon name={playing ? 'fas fa-pause' : done ? 'fas fa-redo' : 'fas fa-play'} />
         </button>
         <div className="EarshotEpisode-main">
           <div className="EarshotEpisode-meta">
-            {[label, date(e.publishedAt), minutes(e.duration), done ? t('show.played') : left].filter(Boolean).join(' · ')}
+            {[label, date(e.publishedAt), minutes(e.duration), done ? ts('show.played') : left].filter(Boolean).join(' · ')}
           </div>
           <Link className="EarshotEpisode-title" href={discussionUrl(e)}>
             {e.title}
@@ -174,7 +186,7 @@ export default class ShowPage extends Page {
             </div>
           ) : null}
         </div>
-        <Link className="EarshotEpisode-replies" href={discussionUrl(e)} aria-label={t('show.replies_label', { count: e.replies })}>
+        <Link className="EarshotEpisode-replies" href={discussionUrl(e)} aria-label={ts('show.replies_label', { count: e.replies })}>
           <Icon name="far fa-comment" /> {number(e.replies)}
         </Link>
       </li>

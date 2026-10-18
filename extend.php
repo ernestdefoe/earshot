@@ -53,6 +53,7 @@ return [
 
     (new Extend\Routes('api'))
         ->get('/earshot/shows', 'earshot.shows', Controller\ShowsController::class)
+        ->get('/earshot/latest', 'earshot.latest', Controller\LatestController::class)
         ->get('/earshot/shows/{slug:[a-z0-9-]+}', 'earshot.shows.show', Controller\ShowsController::class)
         ->post('/earshot/shows', 'earshot.shows.create', Controller\ShowsController::class)
         ->patch('/earshot/shows/{id:[0-9]+}', 'earshot.shows.update', Controller\ShowsController::class)

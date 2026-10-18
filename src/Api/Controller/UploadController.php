@@ -50,7 +50,7 @@ class UploadController implements RequestHandlerInterface
             $show->cover_path = $path;
             $show->cover_url = null;
             $show->save();
-            $this->media->delete($old);
+            $this->media->deleteCover($old);
 
             return new JsonResponse(['show' => $this->presenter->show($show, $actor, true)]);
         }

@@ -18,9 +18,9 @@ export default class ShowHero extends Component {
 
     return (
       <header className="Hero EarshotHero EarshotHero--show" style={{ '--earshot-accent': show.color || undefined }}>
-        {backdrop(show.cover)}
+        {backdrop(show.coverSmall || show.cover)}
         <div className="container EarshotHero-inner">
-          <div className="EarshotHero-poster">{cover(show)}</div>
+          <div className="EarshotHero-poster">{cover(show, 'EarshotCover', true)}</div>
           <div className="EarshotHero-body">
             <ul className="DiscussionHero-items">
               <li className="EarshotHero-pill">

@@ -3,7 +3,7 @@ import FormModal from 'flarum/common/components/FormModal';
 import Button from 'flarum/common/components/Button';
 import Stream from 'flarum/common/utils/Stream';
 import { api } from '../api';
-import { t, clock } from '../util';
+import { t, ts, clock } from '../util';
 
 /** How long a file or address plays, read by the browser: PHP cannot read audio. */
 function measure(src) {
@@ -84,7 +84,13 @@ export default class EpisodeModal extends FormModal {
               {sourceButton('url')}
             </div>
             {this.source === 'file' ? (
-              <input type="file" accept="audio/mpeg,audio/mp4,audio/x-m4a,audio/aac,audio/ogg,.mp3,.m4a,.ogg,.opus" className="FormControl" onchange={(e) => (this.file = e.target.files[0])} aria-label={t('modal.audio_file')} />
+              <input
+                type="file"
+                accept="audio/mpeg,audio/mp4,audio/x-m4a,audio/aac,audio/ogg,.mp3,.m4a,.ogg,.opus"
+                className="FormControl"
+                onchange={(e) => (this.file = e.target.files[0])}
+                aria-label={t('modal.audio_file')}
+              />
             ) : (
               <input type="url" className="FormControl" placeholder="https://…/episode.mp3" bidi={f.audioUrl} aria-label={t('modal.audio_url')} />
             )}
@@ -97,7 +103,13 @@ export default class EpisodeModal extends FormModal {
           </div>
           <div className="Form-group">
             <label for="earshot-ep-chapters">{t('modal.chapters')}</label>
-            <textarea id="earshot-ep-chapters" className="FormControl" rows="4" placeholder={'0:00 Cold open\n12:30 The main story'} bidi={f.chapters} />
+            <textarea
+              id="earshot-ep-chapters"
+              className="FormControl"
+              rows="4"
+              placeholder={'0:00 Cold open\n12:30 The main story'}
+              bidi={f.chapters}
+            />
             <div className="helpText">{t('modal.chapters_help')}</div>
           </div>
           <div className="Form-group">
@@ -107,7 +119,11 @@ export default class EpisodeModal extends FormModal {
           </div>
           <div className="Form-group EarshotModal-actions">
             <Button type="submit" className="Button Button--primary" loading={this.loading}>
-              {this.progress !== null ? t('modal.uploading', { percent: Math.round(this.progress * 100) }) : this.isNew ? t('modal.publish') : t('modal.save')}
+              {this.progress !== null
+                ? t('modal.uploading', { percent: Math.round(this.progress * 100) })
+                : this.isNew
+                  ? t('modal.publish')
+                  : t('modal.save')}
             </Button>
             {!this.isNew ? (
               <Button className="Button Button--danger" icon="fas fa-trash" onclick={() => this.remove()}>
@@ -162,7 +178,7 @@ export default class EpisodeModal extends FormModal {
   }
 
   remove() {
-    if (!confirm(t('modal.delete_episode_confirm'))) return;
+    if (!confirm(ts('modal.delete_episode_confirm'))) return;
     api.del(`episodes/${this.attrs.episode.id}`).then(() => {
       this.hide();
       m.route.set(app.route('earshot.show', { slug: this.attrs.show.slug }));

@@ -1,5 +1,5 @@
 import { player } from './player';
-import { parseClock, t } from './util';
+import { parseClock, ts } from './util';
 
 const PATTERN = /(^|[^\d:])((?:\d{1,2}:)?\d{1,3}:[0-5]\d)(?![\d:])/g;
 const SKIP = 'a, code, pre, button, .EarshotStamp';
@@ -33,7 +33,7 @@ export function linkTimestamps(body, data) {
       chip.type = 'button';
       chip.className = 'EarshotStamp';
       chip.textContent = stamp;
-      chip.title = t('player.play_from', { time: stamp });
+      chip.title = ts('player.play_from', { time: stamp });
       chip.addEventListener('click', () => player.play(episode, show, seconds));
       frag.appendChild(chip);
       last = start + stamp.length;

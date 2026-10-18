@@ -181,7 +181,7 @@ class Player {
   /** Lock-screen and headset controls, where the browser offers them. */
   session() {
     if (!('mediaSession' in navigator) || !this.episode) return;
-    const art = this.episode.image || (this.show && this.show.cover);
+    const art = this.show && (this.show.coverSmall || this.show.cover);
     navigator.mediaSession.metadata = new MediaMetadata({
       title: this.episode.title,
       artist: this.show ? this.show.title : '',
@@ -253,7 +253,7 @@ class Dock extends Component {
     return (
       <div className="EarshotDock" role="region" aria-label={t('player.label')}>
         <Link className="EarshotDock-art" href={discussionUrl(e)} aria-hidden="true" tabindex="-1">
-          {e.image ? <img className="EarshotCover" src={e.image} alt="" /> : cover(show)}
+          {cover(show, 'EarshotCover', true)}
         </Link>
         <div className="EarshotDock-what">
           <Link className="EarshotDock-title" href={discussionUrl(e)}>
@@ -269,7 +269,12 @@ class Dock extends Component {
           <button type="button" className="EarshotDock-skip" onclick={() => player.skip(-15)} aria-label={t('player.back')}>
             -15
           </button>
-          <button type="button" className="EarshotDock-play" onclick={() => player.toggle(e, show)} aria-label={playing ? t('player.pause') : t('player.play')}>
+          <button
+            type="button"
+            className="EarshotDock-play"
+            onclick={() => player.toggle(e, show)}
+            aria-label={playing ? t('player.pause') : t('player.play')}
+          >
             <Icon name={playing ? 'fas fa-pause' : 'fas fa-play'} />
           </button>
           <button type="button" className="EarshotDock-skip" onclick={() => player.skip(30)} aria-label={t('player.forward')}>

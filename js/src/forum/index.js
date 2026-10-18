@@ -13,6 +13,7 @@ import Notification from 'flarum/forum/components/Notification';
  * page has a podcast on it. forum.css carries nothing.
  */
 import stylesheet from './stylesheet';
+import registerWidgets from './widgets';
 
 const t = (key, params) => app.translator.trans(`ernestdefoe-earshot.forum.${key}`, params);
 
@@ -53,6 +54,8 @@ app.initializers.add('ernestdefoe-earshot', () => {
     // Set by the player while something is playing: { episode, time() }.
     player: null,
   };
+
+  if (app.forum.attribute('canViewEarshot')) registerWidgets(app, load);
 
   // Each route also exists in extend.php, so pasted links load.
   app.routes['earshot.index'] = { path: '/podcasts', component: page('PodcastsPage') };

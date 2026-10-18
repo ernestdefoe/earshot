@@ -43,25 +43,21 @@ export default class EpisodeHero extends DiscussionHero {
     const discussion = this.attrs.discussion;
     const e = this.episode();
     const show = this.show();
-    const art = e.image || show.cover;
+    // The show's local 400 px cover; an episode's own art stays on its host.
+    const art = e.image || show.coverSmall || show.cover;
 
     return (
       <header className="Hero DiscussionHero EarshotHero EarshotHero--episode" style={{ '--earshot-accent': show.color || undefined }}>
         {backdrop(art)}
         <div className="container EarshotHero-inner">
           <div className="EarshotHero-poster">
-            {art ? <img className="EarshotCover" src={art} alt="" fetchpriority="high" /> : cover(show)}
+            {art ? <img className="EarshotCover" src={art} alt="" fetchpriority="high" /> : cover(show, 'EarshotCover', true)}
             {e.number ? <span className="EarshotHero-badge">{t('hero.ep_short', { episode: e.number })}</span> : null}
           </div>
           <div className="EarshotHero-body">
             <ul className="DiscussionHero-items">{listItems(this.pills(discussion).toArray())}</ul>
             <h1 className="DiscussionHero-title">{discussion.title()}</h1>
-            {meta([
-              date(e.publishedAt),
-              minutes(e.duration),
-              t('hero.replies', { count: e.replies }),
-              e.explicit ? t('hero.explicit') : null,
-            ])}
+            {meta([date(e.publishedAt), minutes(e.duration), t('hero.replies', { count: e.replies }), e.explicit ? t('hero.explicit') : null])}
             {this.sectionItems().toArray()}
             <div className="EarshotHero-links">{this.actionItems().toArray()}</div>
           </div>
@@ -142,7 +138,8 @@ export default class EpisodeHero extends DiscussionHero {
             <span className={current ? 'EarshotWave-time' : ''}>
               {current ? clock(player.time()) : resume ? t('hero.resume_at', { time: clock(resume) }) : t('hero.play_episode')}
             </span>
-            <span>{e.duration ? clock(e.duration) : ''}</span>
+            {/* The audio's own length once loaded: hosts that insert ads run longer than the feed says. */}
+            <span>{current && player.duration() ? clock(player.duration()) : e.duration ? clock(e.duration) : ''}</span>
           </div>
         </div>
       </div>
@@ -200,7 +197,11 @@ export default class EpisodeHero extends DiscussionHero {
     if (show.canEdit) {
       items.add(
         'edit',
-        <Button className="Button EarshotHero-button" icon="fas fa-pen" onclick={() => app.modal.show(EpisodeModal, { show, episode: e, onsave: (saved) => Object.assign(e, saved) && m.redraw() })}>
+        <Button
+          className="Button EarshotHero-button"
+          icon="fas fa-pen"
+          onclick={() => app.modal.show(EpisodeModal, { show, episode: e, onsave: (saved) => Object.assign(e, saved) && m.redraw() })}
+        >
           {t('hero.edit_episode')}
         </Button>,
         10

@@ -33,6 +33,7 @@ class Presenter
             'title' => $show->title,
             'tagline' => $show->tagline,
             'cover' => $this->media->url($show->cover_path) ?? $show->cover_url,
+            'coverSmall' => $show->cover_path ? $this->media->url(Media::small($show->cover_path)) : $show->cover_url,
             'color' => $show->color,
             'explicit' => $show->explicit,
             'episodeCount' => $show->episode_count,
@@ -68,6 +69,19 @@ class Presenter
         }
 
         return $data;
+    }
+
+    /** @return array<string, mixed> A show as a card or the player needs it, without its hosts. */
+    public function brief(Show $show): array
+    {
+        return [
+            'id' => $show->id,
+            'slug' => $show->slug,
+            'title' => $show->title,
+            'cover' => $this->media->url($show->cover_path) ?? $show->cover_url,
+            'coverSmall' => $show->cover_path ? $this->media->url(Media::small($show->cover_path)) : $show->cover_url,
+            'color' => $show->color,
+        ];
     }
 
     /**

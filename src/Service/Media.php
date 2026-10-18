@@ -56,14 +56,32 @@ class Media
         }
     }
 
-    /**
-     * A cover: square-cropped from the centre, at most 1400 px (what Apple
-     * asks for at minimum is 1400, at most 3000), re-encoded as JPEG.
-     * Returns the stored path, or null when the file is not a picture.
-     */
+    /** A stored cover's small version (400 px), for cards and the player. */
+    public static function small(string $path): string
+    {
+        return (string) preg_replace('/\.jpg$/', '-s.jpg', $path);
+    }
+
+    public function deleteCover(?string $path): void
+    {
+        if ($path) {
+            $this->disk()->delete([$path, self::small($path)]);
+        }
+    }
+
     public function storeCover(UploadedFileInterface $file, int $showId): ?string
     {
-        $data = (string) $file->getStream();
+        return $this->storeCoverBytes((string) $file->getStream(), $showId);
+    }
+
+    /**
+     * A cover: square-cropped from the centre and re-encoded as JPEG, twice:
+     * at most 1400 px (what Apple asks for at minimum) for the hero and
+     * podcast apps, and 400 px for cards and the player. Returns the large
+     * one's path, or null when the bytes are not a picture.
+     */
+    public function storeCoverBytes(string $data, int $showId): ?string
+    {
         $info = @getimagesizefromstring($data);
         if (! $info || ! in_array($info[2], [IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_WEBP], true)) {
             return null;
@@ -78,17 +96,16 @@ class Media
         }
 
         $side = min($w, $h);
-        $size = min(1400, $side);
-        $out = imagecreatetruecolor($size, $size);
-        imagefill($out, 0, 0, (int) imagecolorallocate($out, 255, 255, 255));
-        imagecopyresampled($out, $source, 0, 0, (int) (($w - $side) / 2), (int) (($h - $side) / 2), $size, $size, $side, $side);
-
-        ob_start();
-        imagejpeg($out, null, 86);
-        $bytes = (string) ob_get_clean();
-
         $path = "covers/$showId/".Str::random(24).'.jpg';
-        $this->disk()->put($path, $bytes);
+        foreach ([$path => 1400, self::small($path) => 400] as $target => $max) {
+            $size = min($max, $side);
+            $out = imagecreatetruecolor($size, $size);
+            imagefill($out, 0, 0, (int) imagecolorallocate($out, 255, 255, 255));
+            imagecopyresampled($out, $source, 0, 0, (int) (($w - $side) / 2), (int) (($h - $side) / 2), $size, $size, $side, $side);
+            ob_start();
+            imagejpeg($out, null, $max > 400 ? 86 : 82);
+            $this->disk()->put($target, (string) ob_get_clean());
+        }
 
         return $path;
     }

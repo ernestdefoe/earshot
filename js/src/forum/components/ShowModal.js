@@ -3,7 +3,7 @@ import FormModal from 'flarum/common/components/FormModal';
 import Button from 'flarum/common/components/Button';
 import Stream from 'flarum/common/utils/Stream';
 import { api } from '../api';
-import { t } from '../util';
+import { t, ts } from '../util';
 
 const LINKS = ['apple', 'spotify', 'youtube', 'pocketcasts', 'overcast'];
 
@@ -58,19 +58,39 @@ export default class ShowModal extends FormModal {
     return (
       <div className="Modal-body">
         <div className="Form">
-          {field('title', t('modal.title'), text('title', { required: true, maxlength: 120 }))}
+          {field('title', t('modal.title'), text('title', { maxlength: 120 }), this.isNew ? t('modal.title_help') : null)}
           {field('tagline', t('modal.tagline'), text('tagline', { maxlength: 200 }))}
-          {field('description', t('modal.description'), <textarea id="earshot-description" className="FormControl" rows="4" maxlength="4000" bidi={f.description} />)}
+          {field(
+            'description',
+            t('modal.description'),
+            <textarea id="earshot-description" className="FormControl" rows="4" maxlength="4000" bidi={f.description} />
+          )}
           {field(
             'cover',
             t('modal.cover'),
-            <input id="earshot-cover" type="file" accept="image/jpeg,image/png,image/webp" className="FormControl" onchange={(e) => (this.file = e.target.files[0])} />,
+            <input
+              id="earshot-cover"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              className="FormControl"
+              onchange={(e) => (this.file = e.target.files[0])}
+            />,
             t('modal.cover_help')
           )}
           <div className="EarshotModal-row">
             {field('category', t('modal.category'), text('category', { maxlength: 80, placeholder: t('modal.category_placeholder') }))}
             {field('language', t('modal.language'), text('language', { maxlength: 12 }))}
-            {field('color', t('modal.color'), <input id="earshot-color" type="color" className="FormControl" value={f.color() || '#1f3a5f'} oninput={(e) => f.color(e.target.value)} />)}
+            {field(
+              'color',
+              t('modal.color'),
+              <input
+                id="earshot-color"
+                type="color"
+                className="FormControl"
+                value={f.color() || '#1f3a5f'}
+                oninput={(e) => f.color(e.target.value)}
+              />
+            )}
           </div>
           <div className="Form-group">
             <label className="checkbox">
@@ -170,7 +190,7 @@ export default class ShowModal extends FormModal {
   }
 
   remove() {
-    if (!confirm(t('modal.delete_show_confirm'))) return;
+    if (!confirm(ts('modal.delete_show_confirm'))) return;
     api.del(`shows/${this.attrs.show.id}`).then(() => {
       this.hide();
       m.route.set(app.route('earshot.index'));

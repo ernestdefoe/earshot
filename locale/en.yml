@@ -88,6 +88,7 @@ ernestdefoe-earshot:
       new_episode: "New episode of {show}"
       edit_episode: Edit episode
       title: Title
+      title_help: Following a feed? Leave this empty to use the feed's own title.
       tagline: Tagline
       description: Description
       cover: Cover art
@@ -125,6 +126,12 @@ ernestdefoe-earshot:
       delete_show_confirm: Delete this show? Its episodes' discussions stay, as ordinary discussions.
       delete_episode: Delete episode
       delete_episode_confirm: Delete this episode? Its discussion is hidden and can be restored.
+
+    widget:
+      title: Latest episodes
+      heading: Heading (optional)
+      empty: No episodes yet.
+      all: All podcasts
 
     notifications:
       new_episode: "New episode of {show}"

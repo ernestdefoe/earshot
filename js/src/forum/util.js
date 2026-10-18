@@ -1,7 +1,11 @@
 import app from 'flarum/forum/app';
 import stringToColor from 'flarum/common/utils/stringToColor';
+import extractText from 'flarum/common/utils/extractText';
 
 export const t = (key, params) => app.translator.trans(`ernestdefoe-earshot.forum.${key}`, params);
+
+/** A translation as a plain string: trans() with parameters returns vnodes, which join() turns into "S,1,". */
+export const ts = (key, params) => extractText(t(key, params));
 
 /** 3723 → "1:02:03", 62 → "1:02". */
 export function clock(seconds) {
@@ -24,7 +28,7 @@ export function minutes(seconds) {
   if (!seconds) return null;
   const total = Math.round(seconds / 60);
   const h = Math.floor(total / 60);
-  return h ? t('time.hours_minutes', { hours: h, minutes: total % 60 }) : t('time.minutes', { minutes: Math.max(1, total) });
+  return h ? ts('time.hours_minutes', { hours: h, minutes: total % 60 }) : ts('time.minutes', { minutes: Math.max(1, total) });
 }
 
 export const date = (iso) => (iso ? new Date(iso).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : '');
@@ -32,12 +36,13 @@ export const date = (iso) => (iso ? new Date(iso).toLocaleDateString(undefined, 
 export const number = (n) => Number(n || 0).toLocaleString();
 
 /** The discussion page of an episode, as the API sends one. */
-export const discussionUrl = (episode) => app.route('discussion', { id: episode.slug ? `${episode.discussionId}-${episode.slug}` : episode.discussionId });
+export const discussionUrl = (episode) =>
+  app.route('discussion', { id: episode.slug ? `${episode.discussionId}-${episode.slug}` : episode.discussionId });
 
 /** "S2 · EP 48", "EP 48", or nothing. */
 export function episodeLabel(e) {
-  if (!e.number) return e.season ? t('hero.season', { season: e.season }) : null;
-  return e.season ? t('hero.season_episode', { season: e.season, episode: e.number }) : t('hero.episode', { episode: e.number });
+  if (!e.number) return e.season ? ts('hero.season', { season: e.season }) : null;
+  return e.season ? ts('hero.season_episode', { season: e.season, episode: e.number }) : ts('hero.episode', { episode: e.number });
 }
 
 /** A show's accent: its own colour, else one derived from its title, as Flarum colours avatars. */
@@ -55,10 +60,11 @@ export function avatar(user, className = '') {
   );
 }
 
-/** A show's cover, or its initials on its accent where it has none. */
-export function cover(show, className = 'EarshotCover') {
-  return show.cover ? (
-    <img className={className} src={show.cover} alt="" loading="lazy" decoding="async" />
+/** A show's cover (`small`: the 400 px one), or its initials on its accent where it has none. */
+export function cover(show, className = 'EarshotCover', small = false) {
+  const src = small ? show.coverSmall || show.cover : show.cover;
+  return src ? (
+    <img className={className} src={src} alt="" loading="lazy" decoding="async" />
   ) : (
     <span className={`${className} ${className}--blank`} style={{ '--earshot-accent': accent(show) }} aria-hidden="true">
       {show.title

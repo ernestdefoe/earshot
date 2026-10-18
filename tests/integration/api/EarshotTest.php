@@ -178,6 +178,10 @@ class EarshotTest extends ConsoleTestCase
         $this->assertStringContainsString('a link (https://example.com/14)', (string) $episodes[2]->summary);
         $this->assertStringNotContainsString('<script', (string) $episodes[2]->summary);
         $this->assertSame('https://cdn.example.com/cover.jpg', $show->cover_url);
+        $this->assertStringStartsWith("covers/$show->id/feed-", (string) $show->cover_path, 'the feed\'s artwork is kept here');
+        $disk = $this->app()->getContainer()->make(Media::class)->disk();
+        $this->assertSame([1400, 1400], array_slice(getimagesizefromstring($disk->get($show->cover_path)), 0, 2));
+        $this->assertSame([400, 400], array_slice(getimagesizefromstring($disk->get(Media::small($show->cover_path))), 0, 2));
         $this->assertSame('Technology', $show->category);
         $this->assertSame(0, $this->database()->table('notifications')->count(), 'a first import tells nobody');
 

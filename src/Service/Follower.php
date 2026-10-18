@@ -20,9 +20,12 @@ use Illuminate\Contracts\Queue\Queue;
  */
 class Follower
 {
-    public const FEED_BYTES = 20_000_000;
+    public const FEED_BYTES = 40_000_000;
     public const PER_RUN = 25;
     public const CHAPTER_FETCHES = 5;
+
+    /** The title the last feed read gave, for a show started without one. */
+    public ?string $lastTitle = null;
 
     public function __construct(
         private SafeHttp $http,
@@ -30,6 +33,7 @@ class Follower
         private Starter $starter,
         private SettingsRepositoryInterface $settings,
         private Queue $queue,
+        private Media $media,
     ) {
     }
 
@@ -72,6 +76,7 @@ class Follower
             return $this->failed($show, 'not_a_feed');
         }
 
+        $this->lastTitle = $feed['show']['title'] ?: null;
         $show->feed_etag = $response['etag'] ?: null;
         $show->feed_modified = $response['modified'] ?: null;
         $show->fetch_error = null;
@@ -165,7 +170,19 @@ class Follower
         if (! $show->description && $meta['description']) {
             $show->description = $meta['description'];
         }
-        if (! $show->cover_path && $meta['image']) {
+        // The feed's artwork, fetched once and kept here: hosts send 3000 px
+        // originals, and visitors' browsers never call the podcast host's
+        // CDN for a picture. A cover uploaded on the forum always wins.
+        if ($meta['image'] && $meta['image'] !== $show->cover_url && (! $show->cover_path || str_starts_with($show->cover_path, "covers/$show->id/feed-"))) {
+            $response = $this->http->get($meta['image'], 15_000_000, 10);
+            $path = isset($response['body']) && $response['status'] < 400 ? $this->media->storeCoverBytes($response['body'], $show->id) : null;
+            if ($path) {
+                $this->media->deleteCover($show->cover_path);
+                // Named so the next read knows it came from the feed.
+                $this->media->disk()->move($path, $feedPath = "covers/$show->id/feed-".basename($path));
+                $this->media->disk()->move(Media::small($path), Media::small($feedPath));
+                $show->cover_path = $feedPath;
+            }
             $show->cover_url = $meta['image'];
         }
         if (! $show->category && $meta['category']) {

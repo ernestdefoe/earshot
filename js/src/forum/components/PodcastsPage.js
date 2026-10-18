@@ -70,14 +70,21 @@ export default class PodcastsPage extends Page {
       <ul className="EarshotShows">
         {this.shows.map((show) => (
           <li key={show.id}>
-            <Link className="EarshotShowCard" href={app.route('earshot.show', { slug: show.slug })} style={{ '--earshot-accent': show.color || undefined }}>
-              {cover(show, 'EarshotShowCard-cover EarshotCover')}
+            <Link
+              className="EarshotShowCard"
+              href={app.route('earshot.show', { slug: show.slug })}
+              style={{ '--earshot-accent': show.color || undefined }}
+            >
+              {cover(show, 'EarshotShowCard-cover EarshotCover', true)}
               <div className="EarshotShowCard-body">
                 <h2 className="EarshotShowCard-title">{show.title}</h2>
                 {show.tagline ? <p className="EarshotShowCard-tagline">{show.tagline}</p> : null}
                 <div className="EarshotShowCard-meta">
                   <span className="EarshotShowCard-hosts">{show.hosts.slice(0, 3).map((u) => avatar(u, 'Avatar--mini'))}</span>
-                  {[t('hero.episodes', { count: show.episodeCount }), show.lastEpisodeAt ? t('index.latest', { date: date(show.lastEpisodeAt) }) : null]
+                  {[
+                    t('hero.episodes', { count: show.episodeCount }),
+                    show.lastEpisodeAt ? t('index.latest', { date: date(show.lastEpisodeAt) }) : null,
+                  ]
                     .filter(Boolean)
                     .map((part) => (
                       <span>{part}</span>
