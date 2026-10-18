@@ -55,7 +55,8 @@ app.initializers.add('ernestdefoe-earshot', () => {
     player: null,
   };
 
-  if (app.forum.attribute('canViewEarshot')) registerWidgets(app, load);
+  // 🚨 app.forum does not exist yet in an initializer: who may see the widget is decided when it draws.
+  registerWidgets(app, load);
 
   // Each route also exists in extend.php, so pasted links load.
   app.routes['earshot.index'] = { path: '/podcasts', component: page('PodcastsPage') };

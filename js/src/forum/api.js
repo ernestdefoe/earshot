@@ -1,4 +1,5 @@
 import app from 'flarum/forum/app';
+import extractText from 'flarum/common/utils/extractText';
 
 /*
  * Earshot's API. Plain JSON endpoints rather than JSON:API resources: the
@@ -26,6 +27,8 @@ export const api = {
           json = JSON.parse(xhr.responseText);
         } catch (e) {}
         if (xhr.status >= 200 && xhr.status < 300) resolve(json);
+        // 413 comes from the web server (or PHP's post_max_size) before Flarum sees the file.
+        else if (xhr.status === 413 || (!json && xhr.status === 422)) reject(extractText(app.translator.trans('ernestdefoe-earshot.forum.modal.server_limit')));
         else reject(json?.errors?.[0]?.detail || xhr.statusText || 'Upload failed');
       };
       xhr.onerror = () => reject('Upload failed');

@@ -33,6 +33,10 @@ await page.setCookie({ name: 'flarum_remember', value: S.member, domain: new URL
 const stamp = () => page.evaluate(() => (app.earshot.player ? app.earshot.player.stamp() : null));
 const seconds = (s) => (s ? s.split(':').reduce((a, b) => a * 60 + +b, 0) : -1);
 
+// The forum must boot at all: an initializer that throws takes every page down.
+await page.goto(`${BASE}/`, { waitUntil: 'networkidle2' });
+check(!!(await page.$('.DiscussionList, .IndexPage')), 'the forum boots with Earshot enabled');
+
 await page.goto(`${BASE}/podcasts/${S.show}`, { waitUntil: 'networkidle2' });
 await page.waitForSelector('.EarshotEpisode-play');
 await page.screenshot({ path: `${OUT}/show.png` });
@@ -44,6 +48,8 @@ const t1 = seconds(await stamp());
 check(t1 >= 2, `audio plays from the show page (at ${t1}s)`);
 
 // In-app navigation to the episode's discussion: the player must keep going.
+// Scrolled to the middle first: at the bottom of the window the dock covers it.
+await page.$eval('.EarshotEpisode--current .EarshotEpisode-title', (e) => e.scrollIntoView({ block: 'center' }));
 await page.click('.EarshotEpisode--current .EarshotEpisode-title');
 await page.waitForSelector('.EarshotHero--episode', { timeout: 10000 });
 await sleep(3000);

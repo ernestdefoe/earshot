@@ -10,6 +10,7 @@ const flarumGlobal = () => (typeof globalThis !== 'undefined' ? globalThis.flaru
 export default function registerWidgets(app, load) {
   const loaded = { mod: null };
   const content = () => {
+    if (!app.forum.attribute('canViewEarshot')) return null;
     if (loaded.mod) return loaded.mod.LatestEpisodes.component();
     load().then((mod) => {
       loaded.mod = mod;

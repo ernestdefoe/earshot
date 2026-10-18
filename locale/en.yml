@@ -122,6 +122,7 @@ ernestdefoe-earshot:
       publish: Publish
       save: Save
       uploading: "Uploading… {percent}%"
+      server_limit: The server refused a file this big. Its upload limit (the web server's body size, and PHP's upload_max_filesize and post_max_size) must be raised, or link to the file instead.
       delete_show: Delete show
       delete_show_confirm: Delete this show? Its episodes' discussions stay, as ordinary discussions.
       delete_episode: Delete episode
