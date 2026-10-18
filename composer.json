@@ -1,0 +1,73 @@
+{
+    "name": "ernestdefoe/earshot",
+    "description": "Podcasts that live in your forum: every episode is a discussion, the player keeps going while members browse, and shows can be hosted on the forum or follow a feed hosted anywhere.",
+    "keywords": ["flarum", "podcast", "podcasts", "audio", "rss", "episodes", "player"],
+    "type": "flarum-extension",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ernest Defoe",
+            "email": "ernestdefoe@gmail.com"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/ernestdefoe/earshot/issues",
+        "source": "https://github.com/ernestdefoe/earshot"
+    },
+    "funding": [
+        {
+            "type": "other",
+            "url": "https://buymeacoffee.com/ernestdefoe"
+        }
+    ],
+    "require": {
+        "php": "^8.3",
+        "ext-simplexml": "*",
+        "flarum/core": "^2.0"
+    },
+    "suggest": {
+        "flarum/tags": "Puts each show's episode discussions in a tag of your choice."
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "Earshot",
+            "category": "feature",
+            "icon": {
+                "name": "fas fa-podcast",
+                "backgroundColor": "#0b0d11",
+                "color": "#f2c14e"
+            }
+        }
+    },
+    "minimum-stability": "beta",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "ErnestDefoe\\Earshot\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ErnestDefoe\\Earshot\\Tests\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "flarum/phpstan": "^2.0",
+        "flarum/testing": "^2.0",
+        "flarum/tags": "^2.0"
+    },
+    "scripts": {
+        "test": [
+            "@test:integration"
+        ],
+        "test:integration": "phpunit -c tests/phpunit.integration.xml",
+        "test:setup": "@php tests/integration/setup.php",
+        "analyse:phpstan": "phpstan analyse"
+    },
+    "scripts-descriptions": {
+        "test": "Runs all tests.",
+        "test:integration": "Runs all integration tests.",
+        "test:setup": "Sets up a database for use with integration tests. Execute this only once.",
+        "analyse:phpstan": "Run static analysis"
+    }
+}

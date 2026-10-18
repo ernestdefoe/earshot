@@ -1,0 +1,905 @@
+// Earshot's page styles: compiled to css/earshot.css by js/build-css.mjs and
+// loaded with the page chunk, never in forum.css. Colours come from Flarum's
+// CSS variables, except the hero, which is always dark (Marquee's hero, so
+// the two extensions look like one family).
+
+@hero-bg: #0b0d11;
+@hero-ink: #f2f0eb;
+@gold: #f2c14e;
+
+// ---- Hero -------------------------------------------------------------------
+.Hero.EarshotHero.EarshotHero.EarshotHero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  color: @hero-ink;
+  background: @hero-bg;
+  padding: 36px 0 32px;
+  margin-bottom: 28px;
+  text-align: left;
+  border: 0;
+
+  .DiscussionHero-title {
+    color: #fff;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.15;
+    margin: 0 0 6px;
+    text-align: left;
+    text-wrap: balance;
+  }
+
+  .DiscussionHero-items {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 8px;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media @phone {
+    padding: 18px 0 20px;
+    margin-bottom: 18px;
+
+    .DiscussionHero-title {
+      font-size: 22px;
+    }
+  }
+}
+
+.EarshotHero {
+  &-backdrop {
+    position: absolute;
+    inset: -40px;
+    z-index: -1;
+    background: var(--earshot-accent, #1f3a5f) center / cover;
+    filter: blur(14px) saturate(1.15);
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(8, 10, 14, 0.94) 0%, rgba(8, 10, 14, 0.82) 42%, rgba(8, 10, 14, 0.5) 100%),
+        linear-gradient(0deg, rgba(8, 10, 14, 0.85) 0%, transparent 40%);
+    }
+  }
+
+  &-inner {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 32px;
+    align-items: start;
+  }
+
+  &-poster {
+    position: relative;
+
+    .EarshotCover {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 8px;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
+    }
+  }
+
+  &-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: @gold;
+    color: #1b1608;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  &-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
+    color: @hero-ink !important;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none !important;
+
+    &--quiet {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      font-weight: 500;
+    }
+  }
+
+  &-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 0;
+    margin: 0 0 18px;
+    padding: 0;
+    list-style: none;
+    font-size: 13px;
+    opacity: 0.82;
+
+    li + li::before {
+      content: '·';
+      margin: 0 10px;
+      opacity: 0.6;
+    }
+  }
+
+  &-scores {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px 24px;
+    margin-bottom: 18px;
+  }
+
+  &-score {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    --ring: #21d07a;
+
+    &--episodes {
+      --ring: @gold;
+    }
+    &--followers {
+      --ring: #8fa9ff;
+    }
+  }
+
+  &-ring {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: conic-gradient(var(--ring) calc(var(--v) * 1%), rgba(255, 255, 255, 0.16) 0);
+
+    b {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: @hero-bg;
+      font-size: 14px;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  &-scoreLabel {
+    font-size: 12px;
+    line-height: 1.3;
+    font-weight: 600;
+    opacity: 0.85;
+    max-width: 9em;
+  }
+
+  &-tagline {
+    margin: 0 0 10px;
+    font-style: italic;
+    opacity: 0.72;
+  }
+
+  &-overview {
+    max-width: 68ch;
+    margin: 0 0 18px;
+    line-height: 1.6;
+    white-space: pre-line;
+    opacity: 0.92;
+  }
+
+  &-sectionTitle {
+    margin: 0 0 10px;
+    font-size: 11px;
+    line-height: 1.4;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    color: inherit;
+  }
+
+  &-people {
+    margin-bottom: 20px;
+
+    ul {
+      display: flex;
+      gap: 14px;
+      margin: 0;
+      padding: 0 0 4px;
+      list-style: none;
+      overflow-x: auto;
+    }
+
+    li {
+      flex: none;
+      width: 84px;
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.3;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    b,
+    span {
+      display: block;
+    }
+
+    span {
+      opacity: 0.62;
+    }
+  }
+
+  &-avatar.Avatar {
+    --size: 64px;
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 6px;
+    font-size: 24px;
+    line-height: 64px;
+    display: block;
+    object-fit: cover;
+  }
+
+  &-chapters {
+    margin-bottom: 20px;
+
+    ol {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    button {
+      width: 158px;
+      height: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: inherit;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+
+      &:hover,
+      &:focus-visible {
+        background: rgba(255, 255, 255, 0.12);
+      }
+
+      &.active {
+        background: fade(@gold, 16%);
+        border-color: @gold;
+      }
+    }
+  }
+
+  &-chapterTime {
+    font-size: 12px;
+    font-weight: 700;
+    color: @gold;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &-chapterTitle {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  &-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &-links .Button:not(.Button--primary),
+  &-button.Button {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+
+    &:hover,
+    &:focus-visible {
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+    }
+  }
+
+  &-button--on.Button {
+    background: fade(@gold, 22%);
+  }
+
+  &-attribution {
+    margin-left: auto;
+    font-size: 11px;
+    opacity: 0.55;
+  }
+
+  &-index {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+
+    .EarshotHero-tagline {
+      margin: 0;
+    }
+  }
+
+  // Phones: poster beside the title block, everything else full width below.
+  @media @phone {
+    &-inner {
+      grid-template-columns: 96px minmax(0, 1fr);
+      gap: 4px 14px;
+      padding-inline: 16px;
+    }
+
+    &-body {
+      display: contents;
+
+      > * {
+        grid-column: 1 / -1;
+      }
+
+      > .DiscussionHero-items,
+      > .DiscussionHero-title,
+      > .EarshotHero-meta {
+        grid-column: 2;
+      }
+    }
+
+    &-poster {
+      grid-row: span 3;
+      align-self: start;
+    }
+
+    &-meta {
+      gap: 2px 12px;
+      margin-bottom: 0;
+      font-size: 12px;
+
+      li + li::before {
+        content: none;
+      }
+    }
+
+    &-scores {
+      margin-top: 14px;
+    }
+
+    &-chapters button {
+      width: 140px;
+    }
+
+    &-attribution {
+      margin-left: 0;
+      width: 100%;
+    }
+  }
+}
+
+// ---- The hero's player ------------------------------------------------------
+.EarshotWave {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  max-width: 760px;
+  margin-bottom: 20px;
+  --earshot-progress: 0;
+
+  &-play {
+    flex: none;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 0;
+    background: @gold;
+    color: #14110a;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 8px 24px fade(@gold, 30%);
+
+    &:hover,
+    &:focus-visible {
+      background: lighten(@gold, 6%);
+    }
+  }
+
+  &-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  // The bars are the seek bar: two identical layers, the gold one clipped
+  // to the progress variable, so playback moves a clip and redraws nothing.
+  &-bars {
+    position: relative;
+    height: 44px;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid @gold;
+      outline-offset: 4px;
+    }
+  }
+
+  &-layer {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+
+    span {
+      flex: 1 1 0;
+      min-width: 1px;
+      border-radius: 1px;
+      background: rgba(255, 255, 255, 0.24);
+    }
+
+    &--played {
+      clip-path: inset(0 calc((1 - var(--earshot-progress)) * 100%) 0 0);
+
+      span {
+        background: @gold;
+      }
+    }
+  }
+
+  &-times {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    opacity: 0.72;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+// ---- Timestamp chips in replies ---------------------------------------------
+.EarshotStamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--control-bg);
+  color: var(--link-color, var(--primary-color));
+  font: inherit;
+  font-size: 0.92em;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+
+  &::before {
+    content: '';
+    border-left: 6px solid currentColor;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+  }
+
+  &:hover,
+  &:focus-visible {
+    background: var(--control-bg-shaded, var(--control-bg));
+  }
+}
+
+// ---- Covers -----------------------------------------------------------------
+.EarshotCover {
+  display: block;
+  object-fit: cover;
+  background: rgba(127, 127, 127, 0.15);
+
+  &--blank {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    background: var(--earshot-accent, #1f3a5f);
+    color: @gold;
+    font-weight: 900;
+    font-size: 28px;
+    letter-spacing: 0.02em;
+  }
+}
+
+// ---- Index ------------------------------------------------------------------
+.EarshotShows {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.EarshotShowCard {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  color: var(--text-color);
+  text-decoration: none !important;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--body-bg);
+  border: 1px solid var(--control-bg);
+  transition: transform 0.15s, box-shadow 0.15s;
+
+  &:hover,
+  &:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  }
+
+  &-cover {
+    width: 100%;
+    aspect-ratio: 1;
+  }
+
+  &-body {
+    padding: 12px 14px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+  }
+
+  &-title {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.3;
+  }
+
+  &-tagline {
+    margin: 0;
+    color: var(--muted-color);
+    font-size: 13px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &-meta {
+    margin-top: auto;
+    padding-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 10px;
+    color: var(--muted-color);
+    font-size: 12px;
+  }
+
+  &-hosts {
+    display: inline-flex;
+
+    .Avatar + .Avatar {
+      margin-left: -6px;
+      box-shadow: 0 0 0 2px var(--body-bg);
+    }
+  }
+}
+
+// ---- A show's episodes ------------------------------------------------------
+.EarshotEpisodes {
+  &-heading {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted-color);
+    margin: 0 0 4px;
+  }
+
+  &-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &-more {
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  &-error {
+    margin-bottom: 16px;
+  }
+}
+
+.EarshotEpisode {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--control-bg);
+
+  &-play {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 0;
+    background: var(--control-bg);
+    color: var(--control-color);
+    cursor: pointer;
+
+    &:hover,
+    &:focus-visible {
+      background: var(--primary-color);
+      color: var(--button-primary-color, #fff);
+    }
+  }
+
+  &--current &-play {
+    background: var(--primary-color);
+    color: var(--button-primary-color, #fff);
+  }
+
+  &-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  &-meta {
+    color: var(--muted-color);
+    font-size: 12px;
+  }
+
+  &-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-color);
+
+    .EarshotEpisode--done & {
+      color: var(--muted-color);
+    }
+  }
+
+  &-progress {
+    width: 220px;
+    max-width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--control-bg);
+    overflow: hidden;
+
+    span {
+      display: block;
+      height: 100%;
+      background: var(--primary-color);
+    }
+  }
+
+  &-replies {
+    flex: none;
+    color: var(--muted-color);
+    font-size: 13px;
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+  }
+}
+
+// ---- The dock ---------------------------------------------------------------
+body.Earshot-docked {
+  padding-bottom: 76px;
+}
+
+.EarshotDock {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1001;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 20px;
+  background: var(--body-bg);
+  color: var(--text-color);
+  border-top: 1px solid var(--control-bg);
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
+  --earshot-progress: 0;
+
+  &-art {
+    flex: none;
+    .EarshotCover {
+      width: 48px;
+      height: 48px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+  }
+
+  &-what {
+    width: 240px;
+    min-width: 0;
+  }
+
+  &-title {
+    display: block;
+    font-weight: 600;
+    color: var(--text-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &-show {
+    color: var(--muted-color);
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  &-skip,
+  &-speed,
+  &-close {
+    border: 0;
+    background: none;
+    color: var(--muted-color);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 4px;
+
+    &:hover,
+    &:focus-visible {
+      color: var(--text-color);
+      background: var(--control-bg);
+    }
+  }
+
+  &-speed {
+    background: var(--control-bg);
+    color: var(--control-color);
+    min-width: 46px;
+  }
+
+  &-play {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 0;
+    background: var(--primary-color);
+    color: var(--button-primary-color, #fff);
+    cursor: pointer;
+  }
+
+  &-bar {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--muted-color);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &-track {
+    position: relative;
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--control-bg);
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid var(--primary-color);
+      outline-offset: 4px;
+    }
+  }
+
+  &-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: calc(var(--earshot-progress) * 100%);
+    border-radius: 3px;
+    background: var(--primary-color);
+  }
+
+  &-tick {
+    position: absolute;
+    top: -3px;
+    width: 2px;
+    height: 12px;
+    background: var(--muted-color);
+    opacity: 0.6;
+  }
+
+  @media @phone {
+    gap: 10px;
+    padding: 0 10px;
+
+    &-what {
+      flex: 1;
+      width: auto;
+    }
+
+    &-bar,
+    &-skip,
+    &-speed {
+      display: none;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 2px;
+      width: calc(var(--earshot-progress) * 100%);
+      background: var(--primary-color);
+    }
+  }
+}
+
+// ---- Forms ------------------------------------------------------------------
+.EarshotModal {
+  &-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0 12px;
+  }
+
+  &-source {
+    margin-bottom: 8px;
+  }
+
+  &-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: space-between;
+  }
+
+  fieldset {
+    border: 0;
+    padding: 0;
+    margin: 0 0 12px;
+
+    legend {
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+  }
+}
