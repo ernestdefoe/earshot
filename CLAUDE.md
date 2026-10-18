@@ -3,7 +3,7 @@
 - **Commit straight to `main` and push. Never open a pull request on this repo.**
 - Commit subjects are conventional (`feat:`, `fix:`, `docs:`, `chore:`). The release drafter reads the bump from the subject.
 - `js/dist` and `css/earshot.css` are committed and are what forums load. After any change under `js/src` or `less/`, run `npm run build` in `js/` (from a fresh `npm ci` before a release) and commit the output; CI fails if it is stale.
-- Publishing a release is Ernest's click. Nothing is announced until he says so. New installs go on dev only.
+- Releases go out once built and verified (Ernest, 2026-10-02). Nothing is announced until he says so. New installs go on dev or the showcase only, never a live forum unasked.
 - Every string is translatable (`locale/en.yml`).
 - Earshot Pro (private repo `ernestdefoe/earshot-pro`) builds only on this package's extension points: `app.earshot.onLoad(fn)` in JS and the `sectionItems()` / `actionItems()` ItemLists on `ShowHero` and `EpisodeHero`. Changing those is a breaking change for Pro.
 
