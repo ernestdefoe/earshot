@@ -197,6 +197,11 @@ class EarshotTest extends ConsoleTestCase
         $this->assertSame(0, $this->app()->getContainer()->make(\ErnestDefoe\Earshot\Service\Follower::class)->refresh($show->fresh(), User::query()->find(1)));
         $this->assertContains('If-None-Match: "v2"', end($http->asked)[1]);
 
+        // "Check feed now" reads at most once a minute.
+        $asked = count($http->asked);
+        $this->assertSame(200, $this->call('POST', "/api/earshot/shows/$show->id/refresh", 3)->getStatusCode());
+        $this->assertSame($asked, count($http->asked), 'a read within the minute is not repeated');
+
         // Its feed address sends podcast apps to the real one.
         $feed = $this->send($this->request('GET', '/podcasts/followed/feed'));
         $this->assertSame(301, $feed->getStatusCode());

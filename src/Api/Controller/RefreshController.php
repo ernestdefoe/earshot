@@ -2,6 +2,7 @@
 
 namespace ErnestDefoe\Earshot\Api\Controller;
 
+use Carbon\Carbon;
 use ErnestDefoe\Earshot\Api\Concerns;
 use ErnestDefoe\Earshot\Api\Presenter;
 use ErnestDefoe\Earshot\Service\Follower;
@@ -23,7 +24,11 @@ class RefreshController implements RequestHandlerInterface
     {
         $actor = $this->actor($request);
         $show = $this->editableShow($actor, $this->param($request, 'id'));
-        $result = $this->follower->refresh($show, $actor, true);
+
+        // Once a minute at most: each read can download a large feed.
+        $result = $show->fetched_at && $show->fetched_at->gt(Carbon::now()->subMinute())
+            ? 0
+            : $this->follower->refresh($show, $actor, true);
 
         return new JsonResponse([
             'added' => is_int($result) ? $result : 0,
