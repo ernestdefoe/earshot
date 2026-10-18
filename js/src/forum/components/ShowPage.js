@@ -7,6 +7,7 @@ import Icon from 'flarum/common/components/Icon';
 import Link from 'flarum/common/components/Link';
 import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import Placeholder from 'flarum/common/components/Placeholder';
+import ItemList from 'flarum/common/utils/ItemList';
 import { api } from '../api';
 import { player } from '../player';
 import { t, ts, date, minutes, number, discussionUrl, episodeLabel } from '../util';
@@ -134,7 +135,10 @@ export default class ShowPage extends Page {
         {this.show.canEdit && this.show.fetchError ? (
           <div className="Alert Alert--error EarshotEpisodes-error">{t('show.fetch_error', { error: this.show.fetchError })}</div>
         ) : null}
-        <h2 className="EarshotEpisodes-heading">{t('show.episodes_heading', { count: number(this.show.episodeCount) })}</h2>
+        <div className="EarshotEpisodes-toolbar">
+          <h2 className="EarshotEpisodes-heading">{t('show.episodes_heading', { count: number(this.show.episodeCount) })}</h2>
+          {this.toolbarItems().toArray()}
+        </div>
         {this.episodes.length ? (
           <ul className="EarshotEpisodes-list">{this.episodes.map((e) => this.row(e))}</ul>
         ) : this.loading ? null : (
@@ -150,6 +154,11 @@ export default class ShowPage extends Page {
         ) : null}
       </div>
     );
+  }
+
+  /** Beside the episodes heading. Add-ons add here (search, a studio link). */
+  toolbarItems() {
+    return new ItemList();
   }
 
   row(e) {

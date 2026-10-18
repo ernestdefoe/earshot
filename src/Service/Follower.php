@@ -3,11 +3,13 @@
 namespace ErnestDefoe\Earshot\Service;
 
 use Carbon\Carbon;
+use ErnestDefoe\Earshot\Event\EpisodeImported;
 use ErnestDefoe\Earshot\Job\NotifyFollowers;
 use ErnestDefoe\Earshot\Model\Episode;
 use ErnestDefoe\Earshot\Model\Show;
 use Flarum\Settings\SettingsRepositoryInterface;
 use Flarum\User\User;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Queue\Queue;
 
 /**
@@ -34,6 +36,7 @@ class Follower
         private SettingsRepositoryInterface $settings,
         private Queue $queue,
         private Media $media,
+        private Dispatcher $events,
     ) {
     }
 
@@ -136,6 +139,7 @@ class Follower
             $episode->save();
             $episode->setRelation('show', $show);
             $this->starter->start($episode, $author);
+            $this->events->dispatch(new EpisodeImported($episode, $item));
             $created++;
 
             if (! $first) {

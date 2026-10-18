@@ -5,6 +5,8 @@ namespace ErnestDefoe\Earshot\Api\Controller;
 use Carbon\Carbon;
 use ErnestDefoe\Earshot\Api\Concerns;
 use ErnestDefoe\Earshot\Api\Presenter;
+use ErnestDefoe\Earshot\Event\EpisodeSaved;
+use ErnestDefoe\Earshot\Event\EpisodeSaving;
 use ErnestDefoe\Earshot\Job\NotifyFollowers;
 use ErnestDefoe\Earshot\Model\Episode;
 use ErnestDefoe\Earshot\Model\Show;
@@ -12,6 +14,7 @@ use ErnestDefoe\Earshot\Service\FeedReader;
 use ErnestDefoe\Earshot\Service\Media;
 use ErnestDefoe\Earshot\Service\Starter;
 use Flarum\User\User;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Queue\Queue;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -34,6 +37,7 @@ class EpisodesController implements RequestHandlerInterface
         private Media $media,
         private Starter $starter,
         private Queue $queue,
+        private Dispatcher $events,
     ) {
     }
 
@@ -125,6 +129,7 @@ class EpisodesController implements RequestHandlerInterface
             $this->fail('audio', 'audio_required');
         }
 
+        $this->events->dispatch(new EpisodeSaving($episode, $actor, $in));
         $episode->save();
         if ($oldPath && $oldPath !== $episode->audio_path) {
             $this->media->delete($oldPath);
@@ -138,6 +143,7 @@ class EpisodesController implements RequestHandlerInterface
         } else {
             $this->starter->rename($episode, $actor);
         }
+        $this->events->dispatch(new EpisodeSaved($episode, $actor, $in, $isNew));
 
         $episode->load('discussion:id,slug,comment_count');
 

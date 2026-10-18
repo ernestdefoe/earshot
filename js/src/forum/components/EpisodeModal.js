@@ -2,6 +2,7 @@ import app from 'flarum/forum/app';
 import FormModal from 'flarum/common/components/FormModal';
 import Button from 'flarum/common/components/Button';
 import Stream from 'flarum/common/utils/Stream';
+import ItemList from 'flarum/common/utils/ItemList';
 import { api } from '../api';
 import { t, ts, clock } from '../util';
 
@@ -117,6 +118,7 @@ export default class EpisodeModal extends FormModal {
               <input type="checkbox" checked={f.explicit()} onchange={(e) => f.explicit(e.target.checked)} /> {t('modal.explicit')}
             </label>
           </div>
+          {this.fields().toArray()}
           <div className="Form-group EarshotModal-actions">
             <Button type="submit" className="Button Button--primary" loading={this.loading}>
               {this.progress !== null
@@ -136,6 +138,16 @@ export default class EpisodeModal extends FormModal {
     );
   }
 
+  /** Extra form groups, before the buttons. Add-ons add here and send their values from data(). */
+  fields() {
+    return new ItemList();
+  }
+
+  /** What is sent besides the core fields. Add-ons extend it. */
+  data() {
+    return {};
+  }
+
   async onsubmit(e) {
     e.preventDefault();
     const f = this.f;
@@ -148,6 +160,7 @@ export default class EpisodeModal extends FormModal {
       summary: f.summary(),
       chapters: f.chapters(),
       explicit: f.explicit(),
+      ...this.data(),
     };
 
     try {

@@ -82,9 +82,10 @@ class Player {
     return this.isCurrent(episode) && this.audio && !this.audio.paused;
   }
 
-  /** Play an episode, from `at` seconds or where this listener stopped. */
-  play(episode, show, at = null) {
+  /** Play an episode, from `at` seconds or where this listener stopped; `until` stops it there (a clip). */
+  play(episode, show, at = null, until = null) {
     const a = this.element();
+    this.until = until;
     if (this.isCurrent(episode)) {
       if (at !== null) a.currentTime = at;
       a.play();
@@ -106,6 +107,7 @@ class Player {
   }
 
   toggle(episode, show) {
+    this.until = null;
     if (this.playing(episode)) this.audio.pause();
     else this.play(episode, show);
   }
@@ -151,6 +153,10 @@ class Player {
   tick() {
     const time = this.time();
     const duration = this.duration();
+    if (this.until !== null && this.until !== undefined && time >= this.until) {
+      this.until = null;
+      this.audio.pause();
+    }
     this.listeners.forEach((fn) => fn(time, duration));
 
     const chapters = (this.episode && this.episode.chapters) || [];

@@ -2,6 +2,7 @@ import app from 'flarum/forum/app';
 import FormModal from 'flarum/common/components/FormModal';
 import Button from 'flarum/common/components/Button';
 import Stream from 'flarum/common/utils/Stream';
+import ItemList from 'flarum/common/utils/ItemList';
 import { api } from '../api';
 import { t, ts } from '../util';
 
@@ -126,6 +127,7 @@ export default class ShowModal extends FormModal {
                 : null}
             </fieldset>
           ) : null}
+          {this.fields().toArray()}
           <div className="Form-group EarshotModal-actions">
             <Button type="submit" className="Button Button--primary" loading={this.loading}>
               {this.progress !== null ? t('modal.uploading', { percent: Math.round(this.progress * 100) }) : t('modal.save')}
@@ -141,6 +143,16 @@ export default class ShowModal extends FormModal {
     );
   }
 
+  /** Extra form groups, before the buttons. Add-ons add here and send their values from data(). */
+  fields() {
+    return new ItemList();
+  }
+
+  /** What is sent besides the core fields. Add-ons extend it. */
+  data() {
+    return {};
+  }
+
   onsubmit(e) {
     e.preventDefault();
     this.loading = true;
@@ -154,6 +166,7 @@ export default class ShowModal extends FormModal {
       color: f.color(),
       explicit: f.explicit(),
       links: Object.fromEntries(LINKS.map((k) => [k, this.links[k]()])),
+      ...this.data(),
     };
     if (this.manager) {
       body.feedUrl = f.feedUrl();

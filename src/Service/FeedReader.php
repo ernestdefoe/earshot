@@ -74,6 +74,18 @@ class FeedReader
         } catch (\Throwable) {
         }
 
+        // The best transcript the feed offers: a timed format first.
+        $transcript = null;
+        $rank = ['text/vtt' => 4, 'application/x-subrip' => 3, 'application/srt' => 3, 'application/json' => 2, 'text/html' => 1, 'text/plain' => 1];
+        foreach ($pod->transcript ?? [] as $tr) {
+            $attrs = $tr->attributes();
+            $type = strtolower((string) ($attrs->type ?? ''));
+            $url = self::url((string) ($attrs->url ?? ''));
+            if ($url && ($rank[$type] ?? 0) > ($transcript['rank'] ?? 0)) {
+                $transcript = ['url' => $url, 'type' => $type, 'rank' => $rank[$type]];
+            }
+        }
+
         $chapters = null;
         foreach ($pod->chapters ?? [] as $c) {
             $attrs = $c->attributes();
@@ -99,6 +111,7 @@ class FeedReader
             'image' => self::url((string) ($it->image?->attributes()->href ?? '')),
             'explicit' => self::explicit((string) $it->explicit),
             'chapters' => $chapters,
+            'transcript' => $transcript ? ['url' => $transcript['url'], 'type' => $transcript['type']] : null,
         ];
     }
 
