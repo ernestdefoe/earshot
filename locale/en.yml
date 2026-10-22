@@ -141,6 +141,8 @@ ernestdefoe-earshot:
       notify_new_episode: Someone publishes an episode of a show I follow
 
   admin:
+    widgets:
+      latest: Latest episodes
     settings:
       nav: Show "Podcasts" in the sidebar
       fetch_minutes: Read followed feeds every (minutes)

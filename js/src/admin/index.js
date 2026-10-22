@@ -1,5 +1,6 @@
 import app from 'flarum/admin/app';
 import Extend from 'flarum/common/extenders';
+import { registerEditorWidgets } from '../common/fofWidgets';
 
 /*
  * Settings and permissions in Flarum's own pages. Each is a callback: the
@@ -42,4 +43,9 @@ export const extend = [
     .permission(...perm('earshot.manage', 'fas fa-microphone', 'moderate')),
 ];
 
-app.initializers.add('ernestdefoe-earshot', () => {});
+// FoF's layout editor lists only widgets the admin registers too.
+app.initializers.add('ernestdefoe-earshot', () => {
+  registerEditorWidgets(app, 'ernestdefoe-earshot', [
+    { key: 'earshotLatest', icon: 'fas fa-podcast', title: () => app.translator.trans('ernestdefoe-earshot.admin.widgets.latest') },
+  ]);
+});

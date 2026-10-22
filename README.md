@@ -15,7 +15,7 @@ Podcasts that live in your forum. Every episode is a discussion, the player keep
 - **A real podcast feed** for hosted shows (`/podcasts/your-show/feed`), with the `itunes:` and `podcast:` tags Apple Podcasts and Spotify expect.
 - **Follow a show** and hear about each new episode (alert and email).
 - **Subscribe buttons** for Apple Podcasts, Spotify, YouTube, Pocket Casts, Overcast and RSS.
-- **A Latest episodes widget** for Bespoke and for fof/forum-widgets-core.
+- **A Latest episodes widget** for Bespoke and for fof/forum-widgets-core (drag it into a section of FoF's layout editor; it shows nowhere until you do).
 - **Light.** One small script on every page; the pages, player and styles load only where there is a podcast. No query added to any other page.
 
 ![The podcasts page: show cards with cover art, hosts and the latest episode's date](.github/screenshots/podcasts.png)

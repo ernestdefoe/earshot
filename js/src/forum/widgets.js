@@ -5,6 +5,8 @@
  * whichever (or neither) is installed. Registering only offers the widget: its
  * code is in the lazy chunk and loads when a host actually places it.
  */
+import { fof, hasFofWidgets, placed } from '../common/fofWidgets';
+
 const flarumGlobal = () => (typeof globalThis !== 'undefined' ? globalThis.flarum : undefined);
 
 export default function registerWidgets(app, load) {
@@ -22,11 +24,9 @@ export default function registerWidgets(app, load) {
   const flarum = flarumGlobal();
   if (!flarum || !flarum.extensions) return;
 
-  if ('fof-forum-widgets-core' in flarum.extensions) {
-    const widgetsMod = flarum.reg?.get?.('fof-forum-widgets-core', 'common/extend/Widgets');
-    const widgetMod = flarum.reg?.get?.('fof-forum-widgets-core', 'common/components/Widget');
-    const Widgets = widgetsMod?.default ?? widgetsMod;
-    const WidgetBase = widgetMod?.default ?? widgetMod;
+  if (hasFofWidgets() && app.widgets) {
+    const Widgets = fof('common/extend/Widgets');
+    const WidgetBase = fof('common/components/Widget');
     if (Widgets && WidgetBase) {
       class EarshotLatestWidget extends WidgetBase {
         className() {
@@ -43,7 +43,16 @@ export default function registerWidgets(app, load) {
         }
       }
       new Widgets()
-        .add({ key: 'earshotLatest', component: EarshotLatestWidget, isDisabled: false, isUnique: true, placement: 'end', position: 2 })
+        .add({
+          key: 'earshotLatest',
+          component: EarshotLatestWidget,
+          // 🚨 Opt-in: only where the admin placed it in FoF's layout editor,
+          // and only for a viewer allowed to see podcasts (see common/fofWidgets.js).
+          isDisabled: () => !placed(app, 'ernestdefoe-earshot', 'earshotLatest') || !app.forum.attribute('canViewEarshot'),
+          isUnique: true,
+          placement: 'end',
+          position: 2,
+        })
         .extend(app, 'ernestdefoe-earshot');
     }
   }
