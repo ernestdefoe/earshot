@@ -51,12 +51,24 @@ class ProLeftoversTest extends TestCase
     {
         $this->app();
         // Pro's columns (earshot-pro migration 2026_10_18_100001), left behind by a disable.
-        $this->database()->getSchemaBuilder()->table('earshot_episodes', function (Blueprint $table) {
-            $table->unsignedInteger('audience_group_id')->nullable();
-            $table->unsignedInteger('early_group_id')->nullable();
-            $table->dateTime('public_at')->nullable();
-            $table->dateTime('released_at')->nullable();
-        });
+        // On MySQL the ALTER commits the test's transaction, so an earlier test
+        // may already have added them.
+        $schema = $this->database()->getSchemaBuilder();
+        if (! $schema->hasColumn('earshot_episodes', 'audience_group_id')) {
+            $schema->table('earshot_episodes', function (Blueprint $table) {
+                $table->unsignedInteger('audience_group_id')->nullable();
+                $table->unsignedInteger('early_group_id')->nullable();
+                $table->dateTime('public_at')->nullable();
+                $table->dateTime('released_at')->nullable();
+            });
+        }
+
+        // ...and its episodes are still there too: start from none.
+        $db = $this->database();
+        $old = $db->table('earshot_episodes')->pluck('discussion_id')->all();
+        $db->table('earshot_episodes')->delete();
+        $db->table('posts')->whereIn('discussion_id', $old)->delete();
+        $db->table('discussions')->whereIn('id', $old)->delete();
 
         $ids = [];
         foreach (['Open Mic', 'Backstage Pass', 'Next Week'] as $title) {
