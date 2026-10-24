@@ -8,6 +8,7 @@ use ErnestDefoe\Earshot\Api\Controller;
 use ErnestDefoe\Earshot\Api\DiscussionFields;
 use ErnestDefoe\Earshot\Console\FetchCommand;
 use ErnestDefoe\Earshot\Http\FeedController;
+use ErnestDefoe\Earshot\HideProEpisodes;
 use ErnestDefoe\Earshot\Http\StylesheetController;
 use ErnestDefoe\Earshot\Notification\NewEpisode;
 use ErnestDefoe\Earshot\Service\Media;
@@ -15,7 +16,9 @@ use Flarum\Api\Context;
 use Flarum\Api\Resource\DiscussionResource;
 use Flarum\Api\Resource\ForumResource;
 use Flarum\Api\Schema;
+use Flarum\Discussion\Discussion;
 use Flarum\Extend;
+use Flarum\Extension\Event as ExtensionEvent;
 use Flarum\Foundation\Paths;
 use Flarum\Http\UrlGenerator;
 use Illuminate\Console\Scheduling\Event;
@@ -75,6 +78,16 @@ return [
 
     (new Extend\ApiResource(DiscussionResource::class))
         ->fields(DiscussionFields::class),
+
+    // Earshot Pro disabled but not purged: its supporters-only and scheduled
+    // episodes stay hidden until it is back (fail closed).
+    (new Extend\ModelVisibility(Discussion::class))
+        ->scope(HideProEpisodes::class),
+
+    (new Extend\Event())
+        ->listen(ExtensionEvent\Enabled::class, [HideProEpisodes::class, 'changed'])
+        ->listen(ExtensionEvent\Disabled::class, [HideProEpisodes::class, 'changed'])
+        ->listen(ExtensionEvent\Uninstalled::class, [HideProEpisodes::class, 'changed']),
 
     (new Extend\Notification())
         ->type(NewEpisode::class, ['alert', 'email']),
