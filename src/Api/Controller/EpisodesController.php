@@ -4,6 +4,7 @@ namespace ErnestDefoe\Earshot\Api\Controller;
 
 use Carbon\Carbon;
 use ErnestDefoe\Earshot\Api\Concerns;
+use ErnestDefoe\Earshot\Api\Fails;
 use ErnestDefoe\Earshot\Api\Presenter;
 use ErnestDefoe\Earshot\Event\EpisodeSaved;
 use ErnestDefoe\Earshot\Event\EpisodeSaving;
@@ -23,6 +24,7 @@ use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Publishing, changing and removing an episode. Publishing starts its
@@ -31,6 +33,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 class EpisodesController implements RequestHandlerInterface
 {
     use Concerns;
+    use Fails;
 
     public function __construct(
         private Presenter $presenter,
@@ -38,6 +41,7 @@ class EpisodesController implements RequestHandlerInterface
         private Starter $starter,
         private Queue $queue,
         private Dispatcher $events,
+        private TranslatorInterface $translator,
     ) {
     }
 

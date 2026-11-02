@@ -30,6 +30,9 @@ class NotifyFollowers extends AbstractJob
         $blueprint = new NewEpisode($episode, $discussion->user);
         // One check for everybody when guests can read it, the usual case;
         // otherwise a check per follower, since a tag may be members-only.
+        // Not grouped by groups: other extensions' scopers can depend on the
+        // user (private discussions, approval, link-only), and whereVisibleTo
+        // takes one actor. A queued job, so no page waits on it.
         $public = $discussion->newQuery()->whereVisibleTo(new Guest())->whereKey($discussion->id)->exists();
 
         User::query()

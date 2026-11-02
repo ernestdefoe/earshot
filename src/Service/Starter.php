@@ -23,10 +23,20 @@ class Starter
 {
     use DispatchEventsTrait;
 
+    /**
+     * Whether a show's tag may be used, asked once per loaded show: a feed
+     * import starts up to 25 episodes from the same Show instance. Keyed by
+     * the instance, so the next import (a fresh load) asks again.
+     *
+     * @var \WeakMap<\ErnestDefoe\Earshot\Model\Show, bool>
+     */
+    private \WeakMap $tagUsable;
+
     public function __construct(
         private ExtensionManager $extensions,
         protected Dispatcher $events,
     ) {
+        $this->tagUsable = new \WeakMap();
     }
 
     public function start(Episode $episode, User $author): Discussion
@@ -55,7 +65,7 @@ class Starter
         $discussion->participant_count = 1;
         $discussion->save();
 
-        if ($show->tag_id && $this->extensions->isEnabled('flarum-tags') && \Flarum\Tags\Tag::query()->whereKey($show->tag_id)->exists()) {
+        if ($show->tag_id && ($this->tagUsable[$show] ??= $this->extensions->isEnabled('flarum-tags') && \Flarum\Tags\Tag::query()->whereKey($show->tag_id)->exists())) {
             $discussion->belongsToMany(\Flarum\Tags\Tag::class, 'discussion_tag')->sync([$show->tag_id]);
             $discussion->unsetRelation('tags');
         }

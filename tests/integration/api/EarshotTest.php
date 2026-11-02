@@ -96,6 +96,8 @@ class EarshotTest extends ConsoleTestCase
 
         $bad = $this->call('POST', '/api/earshot/shows', 3, ['title' => 'X', 'hosts' => ['nobody-here']]);
         $this->assertSame(422, $bad->getStatusCode());
+        $container = $this->app()->getContainer();
+        $this->assertSame($container->make('translator'), $container->make(\Symfony\Contracts\Translation\TranslatorInterface::class), 'errors use the forum\'s translator');
     }
 
     #[Test]
@@ -206,6 +208,29 @@ class EarshotTest extends ConsoleTestCase
         $feed = $this->send($this->request('GET', '/podcasts/followed/feed'));
         $this->assertSame(301, $feed->getStatusCode());
         $this->assertSame('https://feeds.example.com/show.rss', $feed->getHeaderLine('Location'));
+    }
+
+    #[Test]
+    public function an_import_checks_the_show_tag_once_and_tags_every_episode(): void
+    {
+        $this->extension('flarum-tags');
+        $this->prepareDatabase([
+            'tags' => [['id' => 5, 'name' => 'Podcasts', 'slug' => 'podcasts', 'position' => 0]],
+            'earshot_shows' => [['id' => 2, 'slug' => 'tagged', 'title' => 'Tagged', 'user_id' => 1, 'tag_id' => 5, 'language' => 'en', 'feed_url' => 'https://feeds.example.com/show.rss', 'created_at' => '2026-01-01 00:00:00']],
+        ]);
+        $this->setting('ernestdefoe-earshot.backlog', '3');
+        $this->fake()->feed('https://feeds.example.com/show.rss', 14);
+        $this->app();
+
+        $lookups = 0;
+        $this->database()->listen(function ($query) use (&$lookups) {
+            $lookups += (int) preg_match('/from [`"]?\w*tags[`"]? where/i', $query->sql);
+        });
+        $this->assertSame(3, $this->app()->getContainer()->make(\ErnestDefoe\Earshot\Service\Follower::class)->refresh(Show::query()->findOrFail(2), User::query()->find(1)));
+
+        $this->assertSame(1, $lookups, 'one tag check per import, not one per episode');
+        $discussions = Episode::query()->where('show_id', 2)->pluck('discussion_id');
+        $this->assertSame(3, $this->database()->table('discussion_tag')->whereIn('discussion_id', $discussions)->where('tag_id', 5)->count());
     }
 
     #[Test]

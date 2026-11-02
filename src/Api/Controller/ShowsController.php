@@ -3,6 +3,7 @@
 namespace ErnestDefoe\Earshot\Api\Controller;
 
 use ErnestDefoe\Earshot\Api\Concerns;
+use ErnestDefoe\Earshot\Api\Fails;
 use ErnestDefoe\Earshot\Api\Presenter;
 use ErnestDefoe\Earshot\Model\Episode;
 use ErnestDefoe\Earshot\Model\Show;
@@ -19,6 +20,7 @@ use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Shows: the /podcasts index, one show's page with a page of its episodes,
@@ -30,6 +32,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 class ShowsController implements RequestHandlerInterface
 {
     use Concerns;
+    use Fails;
 
     public const PER_PAGE = 20;
     public const MAX_HOSTS = 8;
@@ -40,6 +43,7 @@ class ShowsController implements RequestHandlerInterface
         private Follower $follower,
         private SafeHttp $http,
         private ExtensionManager $extensions,
+        private TranslatorInterface $translator,
     ) {
     }
 

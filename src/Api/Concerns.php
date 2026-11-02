@@ -3,7 +3,6 @@
 namespace ErnestDefoe\Earshot\Api;
 
 use ErnestDefoe\Earshot\Model\Show;
-use Flarum\Foundation\ValidationException;
 use Flarum\Http\RequestUtil;
 use Flarum\User\Exception\PermissionDeniedException;
 use Flarum\User\User;
@@ -45,11 +44,5 @@ trait Concerns
         }
 
         return $show;
-    }
-
-    /** @param array<string, mixed> $params */
-    protected function fail(string $field, string $key, array $params = []): never
-    {
-        throw new ValidationException([$field => resolve('translator')->trans("ernestdefoe-earshot.api.$key", $params)]);
     }
 }

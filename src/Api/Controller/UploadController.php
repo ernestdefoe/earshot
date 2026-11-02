@@ -3,6 +3,7 @@
 namespace ErnestDefoe\Earshot\Api\Controller;
 
 use ErnestDefoe\Earshot\Api\Concerns;
+use ErnestDefoe\Earshot\Api\Fails;
 use ErnestDefoe\Earshot\Api\Presenter;
 use ErnestDefoe\Earshot\Service\Media;
 use Flarum\Settings\SettingsRepositoryInterface;
@@ -11,6 +12,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * A show's cover, or an episode's audio file, uploaded by someone who may
@@ -20,11 +22,13 @@ use Psr\Http\Server\RequestHandlerInterface;
 class UploadController implements RequestHandlerInterface
 {
     use Concerns;
+    use Fails;
 
     public function __construct(
         private Media $media,
         private Presenter $presenter,
         private SettingsRepositoryInterface $settings,
+        private TranslatorInterface $translator,
     ) {
     }
 
